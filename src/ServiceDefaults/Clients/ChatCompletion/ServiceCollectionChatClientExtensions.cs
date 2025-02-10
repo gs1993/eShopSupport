@@ -74,7 +74,7 @@ public static class ServiceCollectionChatClientExtensions
         }
 
         var endpointUri = string.IsNullOrEmpty(endpoint) ? null : new Uri(endpoint);
-        return hostBuilder.Services.AddOpenAIChatClient(apiKey, modelOrDeploymentName, endpointUri);
+        return hostBuilder.Services.AddOpenAIChatClient(apiKey, modelOrDeploymentName, null);
     }
 
     public static ChatClientBuilder AddOpenAIChatClient(

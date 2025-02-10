@@ -25,6 +25,7 @@ builder.Services.AddScoped<ISemanticTextMemory, SemanticTextMemory>();
 builder.Services.AddScoped<ProductSemanticSearch>();
 builder.Services.AddScoped<ProductManualSemanticSearch>();
 builder.Services.AddScoped<TicketSummarizer>();
+builder.Services.AddScoped<TicketClassifier>();
 builder.Services.AddHttpClient<PythonInferenceClient>(c => c.BaseAddress = new Uri("http://python-inference"));
 builder.AddAzureBlobClient("eshopsupport-blobs");
 

@@ -169,13 +169,9 @@ public static class TicketApi
         return Results.Ok();
     }
 
-    private static async Task CreateTicketAsync(HttpContext httpContext, AppDbContext dbContext, TicketSummarizer summarizer, PythonInferenceClient pythonInference, CreateTicketRequest request)
+    private static async Task CreateTicketAsync(HttpContext httpContext, AppDbContext dbContext, TicketSummarizer summarizer, TicketClassifier classifier, CreateTicketRequest request)
     {
-        // Classify the new ticket using the small zero-shot classifier model
-        var ticketTypes = Enum.GetValues<TicketType>();
-        var inferredTicketType = await pythonInference.ClassifyTextAsync(
-            request.Message,
-            candidateLabels: ticketTypes.Select(type => type.ToString()));
+        var ticketType = await classifier.Classify(request.Message, enforceRateLimit: true);
 
         var ticket = new Ticket
         {
@@ -183,7 +179,7 @@ public static class TicketApi
             CustomerId = httpContext.GetRequiredCustomerId(),
             Customer = default!, // Will be populated by DB reference
             TicketStatus = TicketStatus.Open,
-            TicketType = Enum.TryParse<TicketType>(inferredTicketType, out var type) ? type : TicketType.Question,
+            TicketType = ticketType ?? TicketType.Question,
         };
 
         // TODO: Better lookup using ID
