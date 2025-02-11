@@ -14,7 +14,7 @@ public class ProductManualSemanticSearch(ITextEmbeddingGenerationService embedde
 
     public async Task<IReadOnlyList<MemoryQueryResult>> SearchAsync(int? productId, string query)
     {
-        var embedding = await embedder.GenerateEmbeddingAsync(query);
+        var vector = await embedder.GenerateEmbeddingAsync(query);
         var filter = !productId.HasValue
             ? null
             : new
@@ -29,7 +29,7 @@ public class ProductManualSemanticSearch(ITextEmbeddingGenerationService embedde
         var response = await httpClient.PostAsync($"collections/{ManualCollectionName}/points/search",
             JsonContent.Create(new
             {
-                vector = embedding,
+                vector = vector,
                 with_payload = new[] { "id", "text", "external_source_name", "additional_metadata" },
                 limit = 3,
                 filter,
